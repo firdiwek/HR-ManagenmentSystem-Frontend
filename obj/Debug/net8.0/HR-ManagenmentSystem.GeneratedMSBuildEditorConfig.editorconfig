@@ -1,0 +1,95 @@
+is_global = true
+build_property.EnableAotAnalyzer = 
+build_property.EnableSingleFileAnalyzer = 
+build_property.EnableTrimAnalyzer = false
+build_property.IncludeAllContentForSelfExtract = 
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = browser
+build_property.RootNamespace = HR-ManagenmentSystem
+build_property.RootNamespace = HR-ManagenmentSystem
+build_property.ProjectDir = /Users/firdu/Desktop/HR-ManagenmentSystem/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = false
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = /Users/firdu/Desktop/HR-ManagenmentSystem
+build_property._RazorSourceGeneratorDebug = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Layout/DataVisualization.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0L0RhdGFWaXN1YWxpemF0aW9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Layout/Home.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0L0hvbWUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0L01haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Layout/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0L05hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Pages/Animate.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQW5pbWF0ZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Pages/AttendanceList.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQXR0ZW5kYW5jZUxpc3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Pages/Counter.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ291bnRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Pages/DepartementList.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRGVwYXJ0ZW1lbnRMaXN0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Pages/EmployeeList.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRW1wbG95ZWVMaXN0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Pages/ForgotPassword.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRm9yZ290UGFzc3dvcmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Pages/Home.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSG9tZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Pages/LeaveRequestList.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTGVhdmVSZXF1ZXN0TGlzdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Pages/LeaveTypeList.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTGVhdmVUeXBlTGlzdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Pages/Register.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUmVnaXN0ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/Pages/Weather.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvV2VhdGhlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/firdu/Desktop/HR-ManagenmentSystem/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 

@@ -1,0 +1,93 @@
+{
+  "Files": [
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/bin/Debug/net8.0/wwwroot/_framework/blazor.webassembly.js",
+      "PackagePath": "staticwebassets/_framework/blazor.webassembly.js"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/obj/Debug/net8.0/compressed/m6e5ojrcnf.gz",
+      "PackagePath": "staticwebassets/_framework/blazor.webassembly.js.gz"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/obj/Debug/net8.0/scopedcss/bundle/HR-ManagenmentSystem.styles.css",
+      "PackagePath": "staticwebassets/HR-ManagenmentSystem.styles.css"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/css/material-plugins.css",
+      "PackagePath": "staticwebassets/css/material-plugins.css"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/css/material-plugins.css.map",
+      "PackagePath": "staticwebassets/css/material-plugins.css.map"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/css/material-plugins.min.css",
+      "PackagePath": "staticwebassets/css/material-plugins.min.css"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/css/material-plugins.min.css.map",
+      "PackagePath": "staticwebassets/css/material-plugins.min.css.map"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/css/material.css",
+      "PackagePath": "staticwebassets/css/material.css"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/css/material.css.map",
+      "PackagePath": "staticwebassets/css/material.css.map"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/css/material.min.css",
+      "PackagePath": "staticwebassets/css/material.min.css"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/css/material.min.css.map",
+      "PackagePath": "staticwebassets/css/material.min.css.map"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/favicon.png",
+      "PackagePath": "staticwebassets/favicon.png"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/icon-192.png",
+      "PackagePath": "staticwebassets/icon-192.png"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/index.html",
+      "PackagePath": "staticwebassets/index.html"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/js/material.js",
+      "PackagePath": "staticwebassets/js/material.js"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/js/material.js.map",
+      "PackagePath": "staticwebassets/js/material.js.map"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/js/material.min.js",
+      "PackagePath": "staticwebassets/js/material.min.js"
+    },
+    {
+      "Id": "/Users/firdu/Desktop/HR-ManagenmentSystem/wwwroot/js/material.min.js.map",
+      "PackagePath": "staticwebassets/js/material.min.js.map"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.HR-ManagenmentSystem.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.build.HR-ManagenmentSystem.props",
+      "PackagePath": "build\\HR-ManagenmentSystem.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.HR-ManagenmentSystem.props",
+      "PackagePath": "buildMultiTargeting\\HR-ManagenmentSystem.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.HR-ManagenmentSystem.props",
+      "PackagePath": "buildTransitive\\HR-ManagenmentSystem.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

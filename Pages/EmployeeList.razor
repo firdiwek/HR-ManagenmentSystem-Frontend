@@ -1,0 +1,315 @@
+@page "/employees"
+@using Models
+@using Services
+@inject EmployeeService EmployeeService
+@inject DepartmentService DepartmentService
+
+<input type="text" @bind="searchTerm" @oninput="OnSearchInput" placeholder="Search employees..." class="form-control mb-3" />
+
+<h3>Employee List</h3>
+<button class="btn btn-primary" @onclick="ShowAddEmployeeModal">Add New Employee</button>
+
+<!-- Department Filter Dropdown -->
+<select @onchange="async (e) => await FilterByDepartment(e.Value.ToString())" class="form-select my-3">
+    <option value="">All Departments</option>
+    @foreach (var department in departments)
+    {
+        <option value="@department.DepartmentId">@department.Name</option>
+    }
+</select>
+
+
+@if (employees == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{   
+    <div class="table table-responsive" >
+    <table class="table table-striped table-hover custom-table">
+        <thead class="table-align-middle">
+            <tr>
+                <th>Id</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Date of Birth</th>
+                <th>Gender</th>
+                <th>Email Address</th>
+                <th>Phone Number</th>
+                <th>Address</th>
+                <th>Department Id</th>
+                <th>Job Title</th>
+                <th>Hire Date</th>
+                <th>Status</th>
+                <th>Contract Type</th>
+                <th>Salary</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in employees)
+            {
+                <tr>
+                    <td>@employee.Id</td>
+                    <td>@employee.FirstName</td>
+                    <td>@employee.LastName</td>
+                    <td>@employee.DateOfBirth.ToString("yyyy-MM-dd")</td>
+                    <td>@employee.Gender</td>
+                    <td>@employee.EmailAddress</td>
+                    <td>@employee.PhoneNumber</td>
+                    <td>@employee.Address</td>
+                    <td>@employee.DepartmentId</td>
+                    <td>@employee.JobTitle</td>
+                    <td>@employee.HireDate.ToString("yyyy-MM-dd")</td>
+                    <td>@employee.EmploymentStatus</td>
+                    <td>@employee.ContractType</td>
+                    <td>@employee.Salary</td>
+                <td>
+                    
+    <div class="d-flex">
+        <!-- Edit Button with Pencil Icon -->
+        <button class="btn btn-warning btn-icon me-2" @onclick="() => ShowEditEmployeeModal(employee)">
+            <i class="fas fa-pencil-alt"></i>
+        </button>
+        <!-- Delete Button with Trash Icon -->
+        <button class="btn btn-danger btn-icon" @onclick="() => DeleteEmployee(employee.Id)">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    </div>
+</td>
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+  @* <div class="pagination">
+    <button class="btn btn-secondary" @onclick="PreviousPage" disabled="@(currentPage == 1)">Previous</button>
+    <span>Page @currentPage of @totalPages</span>
+    <button class="btn btn-secondary" @onclick="NextPage" disabled="@(currentPage == totalPages)">Next</button>
+</div> *@
+
+<!-- Optional: Add buttons to jump to specific pages -->
+@for (int i = 1; i <= totalPages; i++)
+{
+    <button class="btn btn-link" @onclick="() => GoToPage(i)" disabled="@(i == currentPage)">
+        @i
+    </button>
+}
+
+
+    </div>
+}
+
+<!-- Add/Edit Employee Modal -->
+@if (isModalVisible)
+{
+    <div class="modal show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@modalTitle</h5>
+                    <button type="button" class="btn-close" @onclick="HideModal"></button>
+                </div>
+                <div class="modal-body" style="max-height: 600px; overflow-y: auto;">
+                    <div class="mb-3">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-control" @bind="selectedEmployee.FirstName" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-control" @bind="selectedEmployee.LastName" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" class="form-control" @bind="selectedEmployee.Address" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contract Type</label>
+                        <input type="text" class="form-control" @bind="selectedEmployee.ContractType" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" class="form-control" @bind="selectedEmployee.DateOfBirth" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Department Id</label>
+                        <input type="number" class="form-control" @bind="selectedEmployee.DepartmentId" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-control" @bind="selectedEmployee.EmailAddress" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Employment Status</label>
+                        <input type="text" class="form-control" @bind="selectedEmployee.EmploymentStatus" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Gender</label>
+                        <input type="text" class="form-control" @bind="selectedEmployee.Gender" />
+                    </div>
+
+                   
+                    <div class="mb-3">
+                        <label class="form-label">Managerial Id</label>
+                        <input type="number" class="form-control" @bind="selectedEmployee.ManagerId" />
+                    </div>
+                     <div class="mb-3">
+                        <label class="form-label">Job Title</label>
+                        <input type="text" class="form-control" @bind="selectedEmployee.JobTitle" />
+                    </div>
+                      <div class="mb-3">
+                        <label class="form-label">Hire Date</label>
+                        <input type="date" class="form-control" @bind="selectedEmployee.HireDate" />
+                    </div>
+                     <div class="mb-3">
+                        <label class="form-label">Phone-Number</label>
+                        <input type="text" class="form-control" @bind="selectedEmployee.PhoneNumber" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Salary</label>
+                        <input type="number" class="form-control" @bind="selectedEmployee.Salary" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="HideModal">Close</button>
+                    <button class="btn btn-primary" @onclick="async () => await SaveEmployee()">Save changes</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+  private int currentPage = 1;
+    private int totalPages = 5;
+    private const int pageSize = 10;
+    private string searchTerm = string.Empty;
+    private List<Department> departments = new();
+    private int selectedDepartmentId;
+    private Employee selectedEmployee = new Employee();
+    private bool isModalVisible = false;
+    private string modalTitle = string.Empty;
+    private List<Employee>? employees;
+
+    protected override async Task OnInitializedAsync()
+    {
+        departments = await DepartmentService.GetDepartmentsAsync();
+
+        await LoadEmployees();
+    }
+     private async Task FilterByDepartment(string departmentId)
+    {
+        selectedDepartmentId = int.TryParse(departmentId, out int id) ? id : 0;
+        employees = selectedDepartmentId == 0
+            ? await EmployeeService.GetEmployeesAsync()
+            : await EmployeeService.GetEmployeesByDepartmentAsync(selectedDepartmentId);
+    }
+    private async Task OnSearchInput(ChangeEventArgs e)
+    {
+        searchTerm = e.Value?.ToString() ?? string.Empty;
+        employees = string.IsNullOrWhiteSpace(searchTerm)
+            ? await EmployeeService.GetEmployeesAsync()
+            : await EmployeeService.SearchEmployeesAsync(searchTerm);
+    }
+
+   private async Task LoadPagedEmployees()
+{
+    const int pageSize = 10; // Set your desired page size
+    var pagedResult = await EmployeeService.GetPagedEmployeesAsync(currentPage, pageSize);
+    employees = pagedResult.Items;
+    totalPages = (int)Math.Ceiling((double)pagedResult.TotalCount / pageSize); // Calculate total pages
+}
+   private async Task NextPage()
+    {
+        if (currentPage < totalPages)
+        {
+            currentPage++;
+            await LoadPagedEmployees();
+        }
+    }
+
+    private async Task PreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+            await LoadPagedEmployees();
+        }
+    }
+
+    private async Task GoToPage(int page)
+    {
+        if (page > 0 && page <= totalPages)
+        {
+            currentPage = page;
+            await LoadPagedEmployees();
+        }
+    }
+    private async Task LoadEmployees()
+    {
+        employees = await EmployeeService.GetEmployeesAsync();
+    }
+
+    private void ShowAddEmployeeModal()
+    {
+        selectedEmployee = new Employee();
+        modalTitle = "Add New Employee";
+        isModalVisible = true;
+    }
+
+    private void ShowEditEmployeeModal(Employee employee)
+    {
+        selectedEmployee = new Employee
+        {
+            Id = employee.Id,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
+            Address = employee.Address,
+            ContractType = employee.ContractType,
+            DateOfBirth = employee.DateOfBirth,
+            DepartmentId = employee.DepartmentId,
+            EmailAddress = employee.EmailAddress,
+            EmploymentStatus = employee.EmploymentStatus,
+            Gender = employee.Gender,
+            HireDate = employee.HireDate,
+            JobTitle = employee.JobTitle,
+            ManagerId = employee.ManagerId,
+            PhoneNumber = employee.PhoneNumber,
+            Salary = employee.Salary
+        };
+        modalTitle = "Edit Employee";
+        isModalVisible = true;
+        StateHasChanged();
+    }
+
+    private async Task SaveEmployee()
+    {
+        if (selectedEmployee.Id == 0)
+        {
+            // Add new employee
+            await EmployeeService.AddEmployeeAsync(selectedEmployee);
+        }
+        else
+        {
+            // Update existing employee
+            await EmployeeService.UpdateEmployeeAsync(selectedEmployee);
+        }
+
+        // Hide the modal and refresh the list
+        isModalVisible = false;
+        await LoadEmployees();
+    }
+
+    private void HideModal()
+    {
+        isModalVisible = false;
+    }
+
+    private async Task DeleteEmployee(int id)
+    {
+        await EmployeeService.DeleteEmployeeAsync(id);
+        await LoadEmployees(); // Refresh the list after deletion
+    }
+}

@@ -1,0 +1,218 @@
+@page "/departments"
+@using Models
+@using Services
+@inject DepartmentService DepartmentService
+
+<h3>Department List</h3>
+
+<!-- Search and Add Department -->
+<div class="d-flex justify-content-between mb-3">
+    <input type="text" placeholder="Search departments..." class="form-control w-25 me-2" @bind="searchTerm" @oninput="OnSearch" />
+    <button class="btn btn-primary" @onclick="ShowAddDepartmentModal">Add New Department</button>
+</div>
+
+@if (departments == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var department in pagedDepartments)
+            {
+                <tr>
+                    <td>@department.DepartmentId</td>
+                    <td>@department.Name</td>
+                    <td>@department.Description</td>
+                    <td>
+                        <div class="d-flex">
+                            <button class="btn btn-warning btn-sm me-2" @onclick="() => ShowEditDepartmentModal(department)">
+                                <i class="fas fa-pencil-alt"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm" @onclick="() => ShowDeleteConfirmationModal(department.DepartmentId)">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <button class="btn btn-secondary btn-sm" @onclick="PreviousPage" disabled="@(!HasPreviousPage)">Previous</button>
+        <span class="mx-2">Page @currentPage of @totalPages</span>
+        <button class="btn btn-secondary btn-sm" @onclick="NextPage" disabled="@(!HasNextPage)">Next</button>
+    </div>
+}
+
+<!-- Add/Edit Department Modal -->
+@if (isModalVisible)
+{
+    <div class="modal show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@modalTitle</h5>
+                    <button type="button" class="btn-close" @onclick="HideModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" @bind="selectedDepartment.Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <input type="text" class="form-control" @bind="selectedDepartment.Description" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="HideModal">Close</button>
+                    <button class="btn btn-primary" @onclick="async () => await SaveDepartment()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Delete Confirmation Modal -->
+@if (isDeleteModalVisible)
+{
+    <div class="modal show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" @onclick="HideDeleteModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this department?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="HideDeleteModal">Cancel</button>
+                    <button class="btn btn-danger" @onclick="ConfirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Department> departments = new List<Department>();
+    private List<Department> pagedDepartments = new List<Department>();
+    private Department selectedDepartment = new Department();
+    private bool isModalVisible = false;
+    private bool isDeleteModalVisible = false;
+    private int departmentIdToDelete;
+    private string modalTitle = string.Empty;
+    private string searchTerm = string.Empty;
+
+    // Pagination
+    private int currentPage = 1;
+    private int pageSize = 5;
+    private int totalPages;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDepartments();
+    }
+
+    private async Task LoadDepartments()
+    {
+        departments = await DepartmentService.GetDepartmentsAsync();
+        FilterAndPaginateDepartments();
+    }
+
+    private void ShowAddDepartmentModal()
+    {
+        selectedDepartment = new Department();
+        modalTitle = "Add New Department";
+        isModalVisible = true;
+    }
+
+    private void ShowEditDepartmentModal(Department department)
+    {
+        selectedDepartment = department;
+        modalTitle = "Edit Department";
+        isModalVisible = true;
+    }
+
+    private async Task SaveDepartment()
+    {
+        if (selectedDepartment.DepartmentId == 0)
+        {
+            await DepartmentService.AddDepartmentAsync(selectedDepartment);
+        }
+        else
+        {
+            await DepartmentService.UpdateDepartmentAsync(selectedDepartment);
+        }
+        isModalVisible = false;
+        await LoadDepartments();
+    }
+
+    private void HideModal() => isModalVisible = false;
+
+    private void ShowDeleteConfirmationModal(int departmentId)
+    {
+        departmentIdToDelete = departmentId;
+        isDeleteModalVisible = true;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        await DepartmentService.DeleteDepartmentAsync(departmentIdToDelete);
+        isDeleteModalVisible = false;
+        await LoadDepartments();
+    }
+
+    private void HideDeleteModal() => isDeleteModalVisible = false;
+
+    private void OnSearch(ChangeEventArgs e)
+    {
+        searchTerm = e.Value.ToString();
+        FilterAndPaginateDepartments();
+    }
+
+    private void FilterAndPaginateDepartments()
+    {
+        var filteredDepartments = departments.Where(d => 
+            d.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+            d.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+        ).ToList();
+
+        totalPages = (int)Math.Ceiling((double)filteredDepartments.Count / pageSize);
+        pagedDepartments = filteredDepartments.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
+    }
+
+    private void PreviousPage()
+    {
+        if (HasPreviousPage)
+        {
+            currentPage--;
+            FilterAndPaginateDepartments();
+        }
+    }
+
+    private void NextPage()
+    {
+        if (HasNextPage)
+        {
+            currentPage++;
+            FilterAndPaginateDepartments();
+        }
+    }
+
+    private bool HasPreviousPage => currentPage > 1;
+    private bool HasNextPage => currentPage < totalPages;
+}

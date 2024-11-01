@@ -1,0 +1,276 @@
+@page "/leavetypes"
+@using Models
+@using Services
+@inject LeaveTypeService LeaveTypeService
+@using BlazorAnimate 
+<BlazorAnimate.Animate Animation="Animations.FadeDownRight" Duration="TimeSpan.FromSeconds(0.5)" Delay="TimeSpan.FromSeconds(1)">
+
+<h3>Leave Types</h3>
+
+<!-- Button to add a new leave type -->
+<button class="btn btn-primary mb-3" @onclick="ShowAddLeaveTypeModal">Add New Leave Type</button>
+
+<!-- Search Bar -->
+<div class="mb-3">
+    <input type="text" class="form-control" placeholder="Search Leave Types..." @bind="searchText" @bind:event="oninput" />
+</div>
+
+@if (pagedLeaveTypes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Default Days</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var leaveType in pagedLeaveTypes)
+            {
+                <tr>
+                    <td>@leaveType.Id</td>
+                    <td>@leaveType.Name</td>
+                    <td>@leaveType.Description</td>
+                    <td>@leaveType.DefaultDays</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => ShowEditLeaveTypeModal(leaveType)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => ShowDeleteConfirmation(leaveType.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div class="d-flex justify-content-between align-items-center">
+        <span>Page @currentPage of @totalPages</span>
+        <div>
+            <button class="btn btn-secondary" @onclick="PreviousPage" disabled="@(currentPage == 1)">Previous</button>
+            <button class="btn btn-secondary" @onclick="NextPage" disabled="@(currentPage == totalPages)">Next</button>
+        </div>
+    </div>
+}
+
+<!-- Add/Edit Leave Type Modal -->
+@if (isModalVisible)
+{
+    <div class="modal show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@modalTitle</h5>
+                    <button type="button" class="btn-close" @onclick="HideModal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" @bind="selectedLeaveType.Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <input type="text" class="form-control" @bind="selectedLeaveType.Description" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Default Days</label>
+                        <input type="number" class="form-control" @bind="selectedLeaveType.DefaultDays" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="HideModal">Close</button>
+                    <button class="btn btn-primary" @onclick="async () => await SaveLeaveType()" disabled="@isProcessing">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Delete Confirmation Modal -->
+@if (isDeleteConfirmationVisible)
+{
+    <div class="modal show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" @onclick="HideDeleteConfirmation"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this leave type?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="HideDeleteConfirmation">Cancel</button>
+                    <button class="btn btn-danger" @onclick="async () => await DeleteLeaveType()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<LeaveType>? leaveTypes;
+    private List<LeaveType> pagedLeaveTypes = new List<LeaveType>();
+    private LeaveType selectedLeaveType = new LeaveType();
+    private bool isModalVisible = false;
+    private bool isDeleteConfirmationVisible = false;
+    private string modalTitle = string.Empty;
+    private int leaveTypeToDeleteId;
+    private bool isProcessing = false;
+
+    // Pagination Variables
+    private const int pageSize = 5; // Number of items per page
+    private int currentPage = 1;
+    private int totalPages = 0;
+    private string searchText = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadLeaveTypes();
+    }
+
+    private async Task LoadLeaveTypes()
+    {
+        leaveTypes = await LeaveTypeService.GetLeaveTypesAsync();
+        if (leaveTypes is not null)
+        {
+            UpdatePagedLeaveTypes();
+        }
+    }
+
+    private void UpdatePagedLeaveTypes()
+    {
+        // Filtering based on the search text and re-calculating pagination
+        var filteredList = leaveTypes?
+            .Where(lt => string.IsNullOrWhiteSpace(searchText) || 
+                         lt.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) || 
+                         lt.Description.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        if (filteredList is not null && filteredList.Count > 0)
+        {
+            totalPages = (int)Math.Ceiling((double)filteredList.Count / pageSize);
+            pagedLeaveTypes = filteredList
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+        else
+        {
+            // Handle no results found
+            pagedLeaveTypes = new List<LeaveType>();
+            totalPages = 0;
+        }
+    }
+
+    private void ShowAddLeaveTypeModal()
+    {
+        selectedLeaveType = new LeaveType(); // Initialize a new leave type
+        modalTitle = "Add New Leave Type";
+        isModalVisible = true;
+    }
+
+    private void ShowEditLeaveTypeModal(LeaveType leaveType)
+    {
+        selectedLeaveType = new LeaveType
+        {
+            Id = leaveType.Id,
+            Name = leaveType.Name,
+            Description = leaveType.Description,
+            DefaultDays = leaveType.DefaultDays // Set existing values for editing
+        };
+        modalTitle = "Edit Leave Type";
+        isModalVisible = true;
+    }
+
+    private async Task SaveLeaveType()
+    {
+        try
+        {
+            if (selectedLeaveType.Id == 0)
+            {
+                // Adding a new leave type
+                int newId = await LeaveTypeService.AddLeaveTypeAsync(selectedLeaveType);
+                selectedLeaveType.Id = newId;
+                leaveTypes.Add(selectedLeaveType);
+            }
+            else
+            {
+                // Update existing leave type
+                await LeaveTypeService.UpdateLeaveTypeAsync(selectedLeaveType);
+                var index = leaveTypes.FindIndex(lt => lt.Id == selectedLeaveType.Id);
+                if (index != -1)
+                {
+                    leaveTypes[index] = selectedLeaveType;
+                }
+            }
+
+            UpdatePagedLeaveTypes(); // Update pagination after the change
+            HideModal(); // Close the modal
+        }
+        catch (HttpRequestException httpEx)
+        {
+            Console.WriteLine($"Error during the API call: {httpEx.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+        }
+    }
+
+    private void HideModal()
+    {
+        isModalVisible = false;
+    }
+
+    private void ShowDeleteConfirmation(int id)
+    {
+        leaveTypeToDeleteId = id;
+        isDeleteConfirmationVisible = true;
+    }
+
+    private void HideDeleteConfirmation()
+    {
+        isDeleteConfirmationVisible = false;
+    }
+
+    private async Task DeleteLeaveType()
+    {
+        await LeaveTypeService.DeleteLeaveTypeAsync(leaveTypeToDeleteId);
+        leaveTypes.RemoveAll(l => l.Id == leaveTypeToDeleteId);
+        UpdatePagedLeaveTypes(); // Update pagination after deletion
+        isDeleteConfirmationVisible = false;
+    }
+
+    private void PreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+            UpdatePagedLeaveTypes();
+        }
+    }
+
+    private void NextPage()
+    {
+        if (currentPage < totalPages)
+        {
+            currentPage++;
+            UpdatePagedLeaveTypes();
+        }
+    }
+
+    private void OnSearchTextChanged(ChangeEventArgs e)
+    {
+        searchText = e.Value?.ToString();
+        currentPage = 1; // Reset to the first page on new search
+        UpdatePagedLeaveTypes(); // Update the filtered list based on search
+    }
+}
+</BlazorAnimate.Animate>

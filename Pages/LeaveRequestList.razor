@@ -1,0 +1,224 @@
+@page "/leaverequests"
+@using HR.Management.Client.Services
+@using Models
+@inject LeaveRequestService LeaveRequestService
+
+<h3>Leave Requests</h3>
+
+<!-- Button to add a new leave request -->
+<button class="btn btn-primary mb-3" @onclick="ShowAddLeaveRequestModal">Add New Leave Request</button>
+
+@if (leaveRequests == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Employee ID</th>
+                <th>Leave Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Created Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var leaveRequest in leaveRequests)
+            {
+                <tr>
+                    <td>@leaveRequest.Id</td>
+                    <td>@leaveRequest.EmployeeId</td>
+                    <td>@leaveRequest.LeaveType</td>
+                    <td>@leaveRequest.StartDate.ToShortDateString()</td>
+                    <td>@leaveRequest.EndDate.ToShortDateString()</td>
+                    <td>@leaveRequest.Reason</td>
+                    <td>@leaveRequest.Status</td>
+                    <td>@leaveRequest.CreatedDate.ToShortDateString()</td>
+                    <td>@leaveRequest.ApprovalStatus</td> <!-- Display approval status -->
+
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => ShowEditLeaveRequestModal(leaveRequest)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => ShowDeleteConfirmation(leaveRequest.Id)">Delete</button>
+                    @if (leaveRequest != null && leaveRequest.ApprovalStatus == "Pending")
+ // Only show approve/decline for pending requests
+                        {
+                            <button class="btn btn-success" @onclick="() => ApproveLeaveRequest(leaveRequest.Id)">Approve</button>
+                            <button class="btn btn-secondary" @onclick="() => DeclineLeaveRequest(leaveRequest.Id)">Decline</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<!-- Add/Edit Leave Request Modal -->
+@if (isModalVisible)
+{
+    <div class="modal show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@modalTitle</h5>
+                    <button type="button" class="btn-close" @onclick="HideModal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Employee ID</label>
+                        <input type="number" class="form-control" @bind="selectedLeaveRequest.EmployeeId" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Leave Type</label>
+                        <input type="text" class="form-control" @bind="selectedLeaveRequest.LeaveType" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control" @bind="selectedLeaveRequest.StartDate" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control" @bind="selectedLeaveRequest.EndDate" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reason</label>
+                        <textarea class="form-control" @bind="selectedLeaveRequest.Reason"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="HideModal">Close</button>
+                    <button class="btn btn-primary" @onclick="async () => await SaveLeaveRequest()" disabled="@isProcessing">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Delete Confirmation Modal -->
+@if (isDeleteConfirmationVisible)
+{
+    <div class="modal show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" @onclick="HideDeleteConfirmation"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this leave request?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="HideDeleteConfirmation">Cancel</button>
+                    <button class="btn btn-danger" @onclick="async () => await DeleteLeaveRequest()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<LeaveRequest>? leaveRequests;
+    private LeaveRequest selectedLeaveRequest = new LeaveRequest();
+    private bool isModalVisible = false;
+    private bool isDeleteConfirmationVisible = false;
+    private string modalTitle = string.Empty;
+    private int leaveRequestToDeleteId;
+    private bool isProcessing = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadLeaveRequests();
+    }
+
+    private async Task LoadLeaveRequests()
+    {
+        leaveRequests = await LeaveRequestService.GetAllLeaveRequestsAsync();
+    }
+
+    private void ShowAddLeaveRequestModal()
+    {
+        selectedLeaveRequest = new LeaveRequest(); // Initialize a new leave request
+        modalTitle = "Add New Leave Request";
+        isModalVisible = true;
+    }
+
+    private void ShowEditLeaveRequestModal(LeaveRequest leaveRequest)
+    {
+        selectedLeaveRequest = new LeaveRequest
+        {
+            Id = leaveRequest.Id,
+            EmployeeId = leaveRequest.EmployeeId,
+            LeaveType = leaveRequest.LeaveType,
+            StartDate = leaveRequest.StartDate,
+            EndDate = leaveRequest.EndDate,
+            Status = leaveRequest.Status,
+            Reason = leaveRequest.Reason
+        };
+        modalTitle = "Edit Leave Request";
+        isModalVisible = true;
+    }
+
+    private async Task SaveLeaveRequest()
+    {
+        isProcessing = true; // Disable button at start
+        try
+        {
+            if (selectedLeaveRequest.Id == 0) // Add new leave request
+            {
+                await LeaveRequestService.AddLeaveRequestAsync(selectedLeaveRequest);
+            }
+            else // Update existing leave request
+            {
+                await LeaveRequestService.UpdateLeaveRequestAsync(selectedLeaveRequest);
+            }
+            await LoadLeaveRequests(); // Refresh the leave requests
+            HideModal();
+        }
+        finally
+        {
+            isProcessing = false; // Re-enable button after processing
+        }
+    }
+        private async Task ApproveLeaveRequest(int id)
+{
+    await LeaveRequestService.ApproveLeaveRequestAsync(id);
+    await LoadLeaveRequests(); // Refresh the leave requests
+}
+
+private async Task DeclineLeaveRequest(int id)
+{
+    await LeaveRequestService.DeclineLeaveRequestAsync(id);
+    await LoadLeaveRequests(); // Refresh the leave requests
+}
+
+    private void ShowDeleteConfirmation(int leaveRequestId)
+    {
+        leaveRequestToDeleteId = leaveRequestId;
+        isDeleteConfirmationVisible = true;
+    }
+
+    private async Task DeleteLeaveRequest()
+    {
+        await LeaveRequestService.DeleteLeaveRequestAsync(leaveRequestToDeleteId);
+        await LoadLeaveRequests(); // Refresh the leave requests
+        HideDeleteConfirmation();
+    }
+
+    private void HideModal()
+    {
+        isModalVisible = false;
+    }
+
+    private void HideDeleteConfirmation()
+    {
+        isDeleteConfirmationVisible = false;
+    }
+
+
+}

@@ -1,0 +1,95 @@
+@page "/"
+
+<Container Class="home-container">
+    <!-- Header Section -->
+    <Row Class="home-header text-center">
+        <col>
+            <h1 class="display-4">Welcome to the HR Management System</h1>
+            <p class="lead">Your go-to solution for managing HR tasks efficiently.</p>
+        @* </Col> *@
+    </Row>
+
+    <!-- Features Overview Section -->
+    <Row Class="features-overview text-center my-5">
+        <col>
+            <h2>Key Features</h2>
+            <Divider Color="Primary" />
+            <ul class="list-unstyled mt-4">
+                  <li>
+           
+        </li>
+                <li><icon Name="people"/> Employee Management
+                    </li>
+                 <li><icon Name="event_available" /> Leave Management</li>
+                <li><icon Name="account_tree" /> Department Tracking</li>
+                <li><icon Name="analytics" /> Reports and Analytics</li> 
+                <li></li>
+            </ul>
+        @* </Col> *@
+    </Row>
+
+    <!-- Testimonials Section -->
+    <Row Class="testimonials text-center my-5">
+        <col>
+            <h2>What Our Users Say</h2>
+            <Divider Color="Primary" />
+            <blockquote class="blockquote mt-4">
+                <p>"This system has made managing employee records a breeze!"</p>
+                <footer class="blockquote-footer">HR Manager</footer>
+            </blockquote>
+            <blockquote class="blockquote mt-4">
+                <p>"The leave management feature is incredibly user-friendly."</p>
+                <footer class="blockquote-footer">Employee</footer>
+            </blockquote>
+        @* </Col> *@
+    </Row>
+
+    <!-- Call to Action Section -->
+    <Row Class="call-to-action text-center my-5">
+        <col>
+            <h2>Get Started</h2>
+            <Divider Color="Primary" />
+            <button Href="/login" Color="Primary" Class="m-3">Login</Button>
+            <button Href="/register" Color="Secondary" Class="m-3">Register</Button>
+        @* </Col> *@
+    </Row>
+
+    <!-- Footer Section -->
+    <Row Class="home-footer text-center mt-5">
+        <col>
+            <p>&copy; 2024 BM IT Solutions. All Rights Reserved.</p>
+        @* </Col> *@
+    </Row>
+</Container>
+
+<style>
+    .home-container {
+        padding: 2rem;
+        background-color: #fafafa;
+    }
+
+    .home-header h1 {
+        color: #1a237e;
+        font-weight: 700;
+    }
+
+    .features-overview ul {
+        font-size: 1.1rem;
+        color: #424242;
+    }
+
+    .testimonials blockquote {
+        font-style: italic;
+        color: #616161;
+    }
+
+    .call-to-action h2, .features-overview h2, .testimonials h2 {
+        color: #1976d2;
+        font-weight: 600;
+    }
+
+    .home-footer {
+        color: #757575;
+        font-size: 0.9rem;
+    }
+</style>

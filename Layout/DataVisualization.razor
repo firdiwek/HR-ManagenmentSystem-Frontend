@@ -1,0 +1,36 @@
+@page "/datavisualization"
+@using Services
+@using Models
+@inject EmployeeService EmployeeService
+
+<h3>Data Visualization</h3>
+
+<BarChart TItem="Employee" @ref="barChart">
+    <BarChartOptions>
+        <ChartOptions Title="Employees by Department" />
+    </BarChartOptions>
+    <BarChartDataset TItem="Employee" Label="Employee Count" Data="@employeeCounts" BackgroundColor="rgba(75, 192, 192, 0.2)" BorderColor="rgba(75, 192, 192, 1)" BorderWidth="1" />
+</BarChart>
+
+@code {
+    private BarChart<Employee> barChart;
+    private List<int> employeeCounts = new List<int>(); // To hold counts for each department
+    private List<Employee> employees;
+
+    protected override async Task OnInitializedAsync()
+    {
+        employees = await EmployeeService.GetEmployeesAsync();
+        LoadChartData();
+    }
+
+    private void LoadChartData()
+    {
+        // Group employees by DepartmentId and count them
+        var groupedEmployees = employees.GroupBy(e => e.DepartmentId)
+                                         .Select(g => g.Count())
+                                         .ToList();
+
+        // Set the counts for the chart
+        employeeCounts = groupedEmployees;
+    }
+}

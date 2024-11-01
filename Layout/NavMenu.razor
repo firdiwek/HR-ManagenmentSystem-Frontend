@@ -1,0 +1,114 @@
+<nav class="nav-menu">
+    <div class="nav-logo">
+        <img src="logo.png" alt="Logo" class="logo-img" /> <!-- Replace with actual logo path -->
+        <span class="logo-text">HR Management</span>
+    </div>
+    <ul>
+        <li>
+            <NavLink href="/" Match="NavLinkMatch.All">
+                <span class="material-icons">home</span> Home
+            </NavLink>
+        </li>
+        <li>
+            <NavLink href="/employees">
+                <span class="material-icons">people</span> Employees
+            </NavLink>
+        </li>
+        <li>
+            <NavLink href="/departments">
+                <span class="material-icons">business</span> Departments
+            </NavLink>
+        </li>
+        <li>
+            <NavLink href="/leavetypes">
+                <span class="material-icons">list</span> Leave Types
+            </NavLink>
+        </li>
+        <li>
+            <NavLink href="/leaverequests">
+                <span class="material-icons">mail</span> Leave Requests
+            </NavLink>
+        </li>
+          <li>
+            <NavLink href="/attendance">
+                <span class="material-icons">mail</span> Attendance
+            </NavLink>
+        </li>
+       <li>
+            <NavLink href="/datavisualization">
+                <MaterialIcon Icon="insert_chart" /> Data Visualization
+            </NavLink>
+        </li>
+     
+    </ul>
+</nav>
+
+<style>
+    .nav-menu {
+        padding-top: 20px;
+        background-color: #2f3b52;
+        height: 100vh;
+        color: #f0f0f0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 250px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-logo {
+        display: flex;
+        align-items: center;
+        padding: 16px;
+        margin-bottom: 24px;
+    }
+
+    .logo-img {
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+    }
+
+    .logo-text {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    .nav-menu ul {
+        list-style-type: none;
+        padding: 0;
+        width: 100%;
+    }
+
+    .nav-menu li {
+        margin: 12px 0;
+    }
+
+    .nav-menu a {
+        color: #f0f0f0;
+        text-decoration: none;
+        font-size: 1.1rem;
+        font-weight: 500;
+        padding: 12px 20px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        border-radius: 8px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .nav-menu a:hover, .nav-menu a.active {
+        background-color: #3f51b5;
+        color: #ffffff;
+    }
+
+    .nav-menu a.active {
+        font-weight: bold;
+    }
+
+    .nav-menu .material-icons {
+        margin-right: 12px;
+        font-size: 1.3rem;
+    }
+</style>
